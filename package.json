@@ -1,0 +1,19 @@
+{
+  "name": "simple-create",
+  "version": "0.1.0",
+  "main": "index.js",
+  "bin": {
+    "simple-create": "./src/index.js"
+  },
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0",
+    "validate-npm-package-name": "^3.0.0"
+  }
+}
