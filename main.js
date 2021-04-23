@@ -2,6 +2,7 @@
 
 const commander = require('commander')
 const chalk = require('chalk')
+const generate = require('./lib/index')
 
 
 
@@ -11,7 +12,7 @@ const packageJson = require('./package.json')
 // global projectName
 let projectName = null
 
-const init = () => {
+const init = async () => {
   const app = new commander.Command(packageJson.name)
     .version(packageJson.version)
     .arguments('<project-name>')
@@ -20,6 +21,7 @@ const init = () => {
       projectName = name
     })
     .option('--use-npm', 'use npm to install')
+    .option('--online <url>', 'github http url.')
     .allowUnknownOption()
     .on('--help', () => {
       console.log('simple-create tools.')
@@ -31,4 +33,12 @@ const init = () => {
     console.error('Project name is required.')
     return
   }
+
+  await generate(
+    projectName,
+    app.useNpm,
+    app.online
+  )
 }
+
+init()

@@ -1,19 +1,24 @@
 {
   "name": "simple-create",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "main.js",
   "bin": {
-    "simple-create": "./src/index.js"
+    "simple-create": "main.js"
   },
   "scripts": {
     "build": "rollup -c"
   },
   "license": "MIT",
   "dependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
     "chalk": "^4.1.1",
     "commander": "^7.2.0",
+    "cross-spawn": "^7.0.3",
     "validate-npm-package-name": "^3.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "eslint": "^7.24.0",
+    "fs-extra": "^9.1.0"
   }
 }
