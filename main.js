@@ -34,10 +34,12 @@ const init = async () => {
     return
   }
 
+  const opts = app.opts()
+  
   await generate(
     projectName,
-    app.useNpm,
-    app.online
+    opts.useNpm,
+    opts.online
   )
 }
 
