@@ -21,6 +21,7 @@ const init = async () => {
       projectName = name
     })
     .option('--use-npm', 'use npm to install')
+    .option('--template <template>', 'use target template', 'react')
     .option('--online <url>', 'github http url.')
     .allowUnknownOption()
     .on('--help', () => {
@@ -39,7 +40,8 @@ const init = async () => {
   await generate(
     projectName,
     opts.useNpm,
-    opts.online
+    opts.online,
+    opts.template,
   )
 }
 

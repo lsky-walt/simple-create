@@ -99,12 +99,14 @@ const createFromBase = async (...args) => {
   const [
     projectName,
     basePath,
-    useNPM
+    useNPM,
+    template
   ] = args
 
   // 现阶段 只有一个 template
   // 未来扩展，将通过 `config.json` 来自动化配置 version
-  const rawPath = path.join(localTemplateDirectory, 'js')
+  console.log(`use {${chalk.yellow(template)}}.`)
+  const rawPath = path.join(localTemplateDirectory, template)
   
   // check isexist
   if(!fs.existsSync(rawPath)) {
@@ -126,11 +128,18 @@ const createFromBase = async (...args) => {
   await install(projectName, useNPM)
 }
 
+/**
+ * @param projectName
+ * @param useNPM 
+ * @param online ?
+ * @param template, target template, default react. if use online, this attr will abandom.
+ */
 const generate = async (...args) => {
   const [
     projectName,
     useNPM,
     online,
+    template,
   ] = args
 
   // base path ?  Target project path
@@ -168,7 +177,7 @@ const generate = async (...args) => {
 
   console.log(`Use ${chalk.bold.yellow('\u007B local \u007D')} asset.`)
   console.log()
-  await createFromBase(projectName, basePath, useNPM)
+  await createFromBase(projectName, basePath, useNPM, template)
 
   console.log()
   console.log(`\u2714 ${chalk.bold.green('Create project completed, goodbye')}.`)

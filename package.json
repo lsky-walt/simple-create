@@ -1,9 +1,9 @@
 {
-  "name": "simple-create",
+  "name": "create-money",
   "version": "0.1.0",
   "main": "main.js",
   "bin": {
-    "simple-create": "main.js"
+    "create-money": "main.js"
   },
   "scripts": {
     "build": "rollup -c"
