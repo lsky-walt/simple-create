@@ -1,9 +1,9 @@
 {
-  "name": "create-money",
+  "name": "cmoney",
   "version": "0.1.0",
   "main": "main.js",
   "bin": {
-    "create-money": "main.js"
+    "cmoney": "main.js"
   },
   "scripts": {
     "build": "rollup -c"
