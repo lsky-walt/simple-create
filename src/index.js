@@ -39,6 +39,35 @@ const promiseSpawn = ({
   });
 })
 
+const checkURL = (url) => {
+  if(!url || typeof url !== 'string') return false
+  return true
+}
+
+const checkURLIsGit = (url) => {
+  if(url.startsWith('git@') || (
+    url.startsWith('http') && url.endsWith('.git')
+  )) {
+    return true
+  }
+
+  return false
+}
+
+const checkURLIsCurl = (url) => {
+  if(url.startsWith('http') && url.endsWith('.zip')) return true
+  return false
+}
+
+
+const resetOnline = (p) => {
+  if(!p) return
+  if(fs.existsSync(p)) {
+    fse.removeSync(p)
+  }
+}
+
+
 const updatePKG = async (...args) => {
   const [
     basePath,
@@ -93,8 +122,110 @@ const install = async (projectName, useNPM) => {
   })
 }
 
-const createFromOnline = () => {}
 
+// clone template from online
+/**
+ *  要求： template 
+ * - package/
+ *    - version.json
+ *    - source/
+ **/ 
+const createFromOnline = async (...args) => {
+  const [projectName, basePath, online, useNPM] = args
+
+  if(!checkURL(online)) {
+    console.log(`\u27A4 ${chalk.red('参数仅允许为url！')}`)
+    process.exit(1)
+    return false
+  }
+
+
+  const t = path.join(localTemplateDirectory, 'from-online')
+
+
+  // download assets
+  // 判断使用 git  还是 curl
+
+  // 使用 git
+  // 如果 git@ 开头
+  // 如果是 http 开头，.git 结尾
+  if(checkURLIsGit(online)) {
+
+    console.log(`使用 ${chalk.yellow('git')} 下载模板，下载地址：${chalk.yellow(online)}。`)
+    console.log()
+
+    resetOnline(t)
+
+    await promiseSpawn({
+      command: 'git',
+      args: [
+        'clone',
+        online,
+        t
+      ]
+    })
+  }
+
+  // 否则用 curl  并且 .zip 结尾
+  if(checkURLIsCurl(online)) {
+    
+
+    // get filename
+    const s = online.split('/')
+    const filename = s[s.length - 1]
+
+    resetOnline(t)
+
+    fs.mkdirSync(t)
+
+    console.log(`使用 ${chalk.yellow('curl')} 下载模板，下载地址：${chalk.yellow(online)}。`)
+    console.log()
+
+    await promiseSpawn({
+      command: 'curl',
+      args: [
+        '-O',
+        online
+      ],
+      option: {
+        cwd: t
+      }
+    })
+
+    // 下载完 解压
+    await promiseSpawn({
+      command: 'unzip',
+      args: [filename]
+    })
+  }
+
+  // 不符合全部报错
+  if(!fs.existsSync(t)) {
+    console.log(chalk.bold.red(`线上下载模板失败！！请检查地址。`))
+    process.exit(1)
+    return
+  }
+
+  console.log(`拷贝中...`)
+  console.log()
+  
+  await fse.copy(path.join(t, 'source'), basePath)
+
+  await updatePKG(basePath, projectName)
+
+  console.log(chalk.cyan(`${rightArrow} Install package.json.`))
+  console.log()
+  await install(projectName, useNPM)
+
+
+  console.log('正在执行清扫任务...')
+  console.log()
+  // 清扫
+  fse.removeSync(t)
+}
+
+
+// clone template from local
 const createFromBase = async (...args) => {
   const [
     projectName,
@@ -103,7 +234,7 @@ const createFromBase = async (...args) => {
     template
   ] = args
 
-  // 现阶段 只有一个 template
+
   // 未来扩展，将通过 `config.json` 来自动化配置 version
   console.log(`use {${chalk.yellow(template)}}.`)
   const rawPath = path.join(localTemplateDirectory, template)
@@ -171,7 +302,7 @@ const generate = async (...args) => {
     console.log(`Use ${chalk.bold.yellow('\u007B online \u007D')} asset: ${chalk.cyan(online)}.`)
     console.log()
 
-    await createFromOnline(projectName, basePath, online)
+    await createFromOnline(projectName, basePath, online, useNPM)
     return
   }
 
