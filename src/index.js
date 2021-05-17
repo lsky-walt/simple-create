@@ -303,6 +303,9 @@ const generate = async (...args) => {
     console.log()
 
     await createFromOnline(projectName, basePath, online, useNPM)
+
+    console.log(`\u2714 ${chalk.bold.green('Create project completed, goodbye')}.`)
+    process.exit(1)
     return
   }
 
