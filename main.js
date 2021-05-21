@@ -25,7 +25,7 @@ const init = async () => {
     .option('--online <url>', 'github http url.')
     .allowUnknownOption()
     .on('--help', () => {
-      console.log('simple-create tools.')
+      console.log('create money tools.')
     })
     .parse(process.argv)
 
