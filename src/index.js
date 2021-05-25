@@ -11,6 +11,14 @@ import { promiseSpawn,
 const readFile = promisify(fs.readFile)
 const write = promisify(fs.writeFile)
 
+
+
+// 就是一个工具 
+// 用来拉去模板  生成模板项目   执行install  
+// 基础 template：git@github.com:lsky-walt/template.git
+
+const asset = "git@github.com:lsky-walt/template.git"
+
 const rightArrow = '\u27A4 \u27A4 \u27A4'
 
 // 基础模板路径
@@ -211,11 +219,28 @@ const createFromBase = async (...args) => {
     template
   ] = args
 
+  if(!fs.existsSync(localTemplateDirectory)) {
+    fs.mkdirSync(localTemplateDirectory)
+  }
 
-  // 未来扩展，将通过 `config.json` 来自动化配置 version
+  const tem = path.join(localTemplateDirectory, 'template')
+  // check template
+  if(!fs.existsSync(tem)) {
+    console.log(`本地不存在模板库，将从云拉去。`)
+    await promiseSpawn({
+      command: "git",
+      args: [
+        'clone',
+        asset,
+        tem
+      ]
+    })
+    console.log()
+  }
+
   console.log(`use { ${warn(template)} }.`)
   console.log()
-  const rawPath = path.join(localTemplateDirectory, template)
+  const rawPath = path.join(tem, 'packages', template)
   
   // check isexist
   if(!fs.existsSync(rawPath)) {
