@@ -7,7 +7,7 @@ export const promiseSpawn = ({
   option = {},
 }) => new Promise((resolve, reject) => {
   if (!command || args.length <= 0) {
-    console.log(chalk.bold.red('参数不全，无法执行spawn命令...'))
+    console.log(stressError('参数不全，无法执行spawn命令...'))
     console.log()
     reject(new Error('参数不全，无法执行spawn命令...'))
     process.exit(1)
@@ -25,3 +25,30 @@ export const promiseSpawn = ({
   });
 })
 
+/**
+ * 公共约定
+ *  info: chalk.cyan
+ *  stress info: chalk.bold.cyan
+ * 
+ *  warn: chalk.yellow
+ *  stress warn: chalk.bold.yellow
+ * 
+ *  error: chalk.red
+ *  stress error: chalk.bold.red
+ * 
+ *  success: chalk.green
+ *  stress success: chalk.bold.green
+ * 
+ */
+
+export const info = chalk.cyan
+export const stressInfo = chalk.bold.cyan
+
+export const warn = chalk.yellow
+export const stressWarn = chalk.bold.yellow
+
+export const error = chalk.red
+export const stressError = chalk.bold.red
+
+export const success = chalk.green
+export const stressSuccess = chalk.bold.green

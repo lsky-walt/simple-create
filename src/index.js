@@ -3,8 +3,9 @@ import path from 'path'
 import fs from 'fs'
 import fse from 'fs-extra'
 import { promisify } from 'util'
-import chalk from 'chalk'
-import { promiseSpawn } from './tool'
+import { promiseSpawn, 
+  info, warn, error, success, 
+  stressInfo, stressWarn, stressError, stressSuccess } from './tool'
 
 // wrap promisify
 const readFile = promisify(fs.readFile)
@@ -71,7 +72,7 @@ const install = async (projectName, useNPM) => {
 
   // install ??
   if (useNPM) {
-    console.log(`Use ${chalk.yellow('Npm')}.`)
+    console.log(`Use ${warn('Npm')}.`)
     console.log()
     await promiseSpawn({
       command: 'npm',
@@ -86,7 +87,7 @@ const install = async (projectName, useNPM) => {
     return
   }
 
-  console.log(`Use ${chalk.yellow('Yarn')}.`)
+  console.log(`Use ${warn('Yarn')}.`)
   console.log()
   await promiseSpawn({
     command: 'yarn',
@@ -110,7 +111,7 @@ const createFromOnline = async (...args) => {
   const [projectName, basePath, online, useNPM] = args
 
   if(!checkURL(online)) {
-    console.log(`\u27A4 ${chalk.red('参数仅允许为url！')}`)
+    console.log(`\u27A4 ${error('参数仅允许为url！')}`)
     process.exit(1)
     return false
   }
@@ -127,7 +128,7 @@ const createFromOnline = async (...args) => {
   // 如果是 http 开头，.git 结尾
   if(checkURLIsGit(online)) {
 
-    console.log(`使用 ${chalk.yellow('git')} 下载模板，下载地址：${chalk.yellow(online)}。`)
+    console.log(`使用 ${warn('git')} 下载模板，下载地址：${warn(online)}。`)
     console.log()
 
     resetOnline(t)
@@ -154,7 +155,7 @@ const createFromOnline = async (...args) => {
 
     fs.mkdirSync(t)
 
-    console.log(`使用 ${chalk.yellow('curl')} 下载模板，下载地址：${chalk.yellow(online)}。`)
+    console.log(`使用 ${warn('curl')} 下载模板，下载地址：${warn(online)}。`)
     console.log()
 
     await promiseSpawn({
@@ -177,7 +178,7 @@ const createFromOnline = async (...args) => {
 
   // 不符合全部报错
   if(!fs.existsSync(t)) {
-    console.log(chalk.bold.red(`线上下载模板失败！！请检查地址。`))
+    console.log(stressError(`线上下载模板失败！！请检查地址。`))
     process.exit(1)
     return
   }
@@ -189,7 +190,7 @@ const createFromOnline = async (...args) => {
 
   await updatePKG(basePath, projectName)
 
-  console.log(chalk.cyan(`${rightArrow} Install package.json.`))
+  console.log(info(`${rightArrow} Install package.json.`))
   console.log()
   await install(projectName, useNPM)
 
@@ -212,25 +213,26 @@ const createFromBase = async (...args) => {
 
 
   // 未来扩展，将通过 `config.json` 来自动化配置 version
-  console.log(`use {${chalk.yellow(template)}}.`)
+  console.log(`use { ${warn(template)} }.`)
+  console.log()
   const rawPath = path.join(localTemplateDirectory, template)
   
   // check isexist
   if(!fs.existsSync(rawPath)) {
-    console.log(chalk.bold.red('无法找到基础模板，程序将自动退出！'))
-    console.log()
+    console.log(stressError('无法找到基础模板，程序将自动退出！'))
     process.exit(1)
     return
   }
 
   // 执行创建
-  console.log(chalk.cyan(`${rightArrow} Create project.`))
+  console.log(info(`${rightArrow} Create project.`))
+  console.log()
   await fse.copy(rawPath, basePath)
 
   await updatePKG(basePath, projectName)
   
 
-  console.log(chalk.cyan(`${rightArrow} Install package.json.`))
+  console.log(info(`${rightArrow} Install package.json.`))
   console.log()
   await install(projectName, useNPM)
 }
@@ -253,8 +255,7 @@ const generate = async (...args) => {
   // 项目所在路径  -->  统一命名 basePath
   const basePath = path.join(process.cwd(), projectName)
 
-  console.log()
-  console.log(`Project name ${rightArrow} : ${chalk.cyan(projectName)}.`)
+  console.log(`Project name ${rightArrow} ${info(projectName)}.`)
   console.log()
 
   // Determine whether the folder exists.
@@ -262,7 +263,7 @@ const generate = async (...args) => {
   const isExist = fs.existsSync(basePath)
   if(isExist) {
     // 存在 报错
-    console.log(chalk.bold.red('文件夹已存在！程序将自动退出！'))
+    console.log(stressError('文件夹已存在！程序将自动退出！'))
     process.exit(1)
     return
   }
@@ -275,22 +276,22 @@ const generate = async (...args) => {
   if(online && typeof online === 'string') {
     // online 是一个url
     // online is url
-    console.log(`Use ${chalk.bold.yellow('\u007B online \u007D')} asset: ${chalk.cyan(online)}.`)
+    console.log(`Use ${stressWarn('\u007B online \u007D')} asset: ${info(online)}.`)
     console.log()
 
     await createFromOnline(projectName, basePath, online, useNPM)
 
-    console.log(`\u2714 ${chalk.bold.green('Create project completed, goodbye')}.`)
+    console.log(`\u2714 ${stressSuccess('Create project completed, goodbye')}.`)
     process.exit(1)
     return
   }
 
-  console.log(`Use ${chalk.bold.yellow('\u007B local \u007D')} asset.`)
+  console.log(`Use ${stressWarn('\u007B local \u007D')} asset.`)
   console.log()
   await createFromBase(projectName, basePath, useNPM, template)
 
   console.log()
-  console.log(`\u2714 ${chalk.bold.green('Create project completed, goodbye')}.`)
+  console.log(`\u2714 ${stressSuccess('Create project completed, goodbye')}.`)
   process.exit(1)
 }
 
