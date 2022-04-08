@@ -7,8 +7,6 @@ import {
   info,
   warn,
   error,
-  success,
-  stressInfo,
   stressWarn,
   stressError,
   stressSuccess,
