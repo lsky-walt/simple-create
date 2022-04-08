@@ -1,10 +1,8 @@
 {
-  "name": "cmoney",
+  "name": "@lsky/argon",
   "version": "0.1.0",
   "main": "main.js",
-  "bin": {
-    "cmoney": "main.js"
-  },
+  "bin": "main.js",
   "scripts": {
     "build": "rollup -c"
   },
